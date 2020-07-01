@@ -21,7 +21,7 @@ func GetPagination(ctx *gin.Context) (int, int) {
 			return page, pageSize
 		}
 	}
-	pageSizeStr := ctx.Query("pageSize")
+	pageSizeStr := ctx.Query("page_size")
 	if len(pageSizeStr) > 0 {
 		pageSize, err = strconv.Atoi(pageSizeStr)
 		if err != nil {

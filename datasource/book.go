@@ -11,10 +11,10 @@ func InitDataSource() {
 		config.Current.Books[idx].ID = idx + 1
 	}
 }
-func GetBookList(page int, pageSize int,tag int) ([]entity.Book, int, error) {
+func GetBookList(page int, pageSize int, tag int) ([]entity.Book, int, error) {
 	source := config.Current.Books
 	if tag > 0 {
-		result := make([]entity.Book,0)
+		result := make([]entity.Book, 0)
 		for _, book := range source {
 			for _, bookTag := range book.Tags {
 				if bookTag.ID == tag {
@@ -24,7 +24,18 @@ func GetBookList(page int, pageSize int,tag int) ([]entity.Book, int, error) {
 		}
 		source = result
 	}
-	return source[(page-1)*pageSize : (page * pageSize)], len(source), nil
+
+	if (page - 1)*pageSize >= len(source) {
+		return []entity.Book{},len(source),nil
+	}
+
+	end := page * pageSize
+	if end > len(source) {
+		end = len(source)
+	}
+
+
+	return source[(page-1)*pageSize : end], len(source), nil
 }
 
 func GetBookById(id int) (*entity.Book, error) {

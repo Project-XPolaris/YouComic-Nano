@@ -4,6 +4,7 @@ import (
 	"YouComic-Nano/datasource"
 	"YouComic-Nano/serializer"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 var TagListHandler gin.HandlerFunc = func(context *gin.Context) {
@@ -14,7 +15,7 @@ var TagListHandler gin.HandlerFunc = func(context *gin.Context) {
 		return
 	}
 	template := serializer.BaseTagTemplate{}
-
+	logrus.Debug(context.Request.URL.String())
 	data := serializer.SerializeMultipleTemplate(tags, &template, nil)
 	container := serializer.DefaultListContainer{}
 	container.SerializeList(data, map[string]interface{}{

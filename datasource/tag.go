@@ -35,5 +35,14 @@ func InitTagDataSource() {
 }
 
 func GetTagList(page int, pageSize int) ([]entity.Tag, int, error) {
-	return Tags[(page-1)*pageSize : (page * pageSize)], len(Tags), nil
+	source := Tags
+	if (page - 1)*pageSize >= len(source) {
+		return []entity.Tag{},len(source),nil
+	}
+	end := page * pageSize
+	if end > len(source) {
+		end = len(source)
+	}
+
+	return source[(page-1)*pageSize : end], len(source), nil
 }
