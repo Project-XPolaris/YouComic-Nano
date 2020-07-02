@@ -9,7 +9,23 @@ import (
 
 var TagListHandler gin.HandlerFunc = func(context *gin.Context) {
 	page, pageSize := GetPagination(context)
-	tags, count, err := datasource.GetTagList(page, pageSize)
+	reader := datasource.TagsReader{
+		Page:     page,
+		PageSize: pageSize,
+		Filters:  []datasource.DataFilter{},
+	}
+
+	searchKey := context.Query("nameSearch")
+	if len(searchKey) > 0 {
+		reader.Filters = append(reader.Filters, &datasource.TagNameSearchFilter{Key: searchKey})
+	}
+
+	tagTypes := context.QueryArray("type")
+	if len(tagTypes) > 0 {
+		reader.Filters = append(reader.Filters, &datasource.TagTypeFilter{TypeNames: tagTypes})
+	}
+
+	tags, count, err := reader.Read()
 	if err != nil {
 		ServerError(err, context, 500)
 		return

@@ -10,16 +10,30 @@ import (
 )
 
 var BookListHandler gin.HandlerFunc = func(context *gin.Context) {
-	page, pageSize := GetPagination(context)
 
+	page, pageSize := GetPagination(context)
+	reader := datasource.BookReader{
+		Page:     page,
+		PageSize: pageSize,
+	}
 	// tag filter
-	tagId, err := utils.GetIntQueryParam("tag", 0, context)
+	tagIds, err := utils.GetIntArrayQueryParam("tag", context)
 	if err != nil {
 		ServerError(err, context, 500)
 		return
 	}
+	if len(tagIds) > 0 {
+		reader.Filters = append(reader.Filters, &datasource.BookTagFilter{TagIds: tagIds})
+	}
+
+	nameSearch := context.Query("nameSearch")
+	if len(nameSearch) > 0 {
+		reader.Filters = append(reader.Filters, &datasource.BookNameSearchFilter{
+			Key: nameSearch,
+		})
+	}
 	logrus.Debug(context.Request.URL.String())
-	books, count, err := datasource.GetBookList(page, pageSize, tagId)
+	books, count, err := reader.Read()
 	if err != nil {
 		ServerError(err, context, 500)
 		return
