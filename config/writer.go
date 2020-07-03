@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	EXPORT_CONFIG_FILE_NAME = "export_library.json"
+	EXPORT_CONFIG_FILE_NAME = "library_export.json"
 )
 
 type LibraryExportConfig struct {

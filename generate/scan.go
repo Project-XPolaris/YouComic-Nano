@@ -52,8 +52,13 @@ func CreateLibrary(scanPath string) ([]entity.Book, error) {
 			}
 			fileName := info.Name()
 			if checkIsPageFile(fileName) {
+				pageUUID,err := uuid.NewUUID()
+				if err != nil {
+					return nil, err
+				}
 				book.Pages = append(book.Pages, entity.PageFile{
 					Path: fileName,
+					UUID: pageUUID.String(),
 				})
 			}
 		}
